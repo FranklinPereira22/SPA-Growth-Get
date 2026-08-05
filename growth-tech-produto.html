@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Inteligente de Monitoramento | Growth Tech</title>
+<meta name="description" content="Sistema Inteligente de Monitoramento Ambiental — sensores ESP32, API Nest.js, PostgreSQL, Web Next.js e App Flutter.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: '#0A0C0E', surface: '#12161B', elevated: '#1A2027',
+          line: '#262E36', linesoft: '#1D242B',
+          txprimary: '#EAEEF1', txsecondary: '#96A0AC', txmuted: '#5B6570',
+          amber: { DEFAULT: '#F5A623', 600: '#D98E12' },
+          cyan:  { DEFAULT: '#33C2E8', 600: '#1FA3C4' },
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['"Inter"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<style>
+  html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+  body { font-family: 'Inter', sans-serif; background:#0A0C0E; }
+  .font-display{font-family:'Space Grotesk',sans-serif}
+  .font-mono{font-family:'JetBrains Mono',monospace}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-track{background:#0A0C0E}
+  ::-webkit-scrollbar-thumb{background:#262E36;border-radius:4px}
+  :focus-visible{outline:2px solid #33C2E8;outline-offset:3px}
+
+  .blueprint{
+    background-image:
+      linear-gradient(rgba(234,238,241,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(234,238,241,0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .noise-fade{background:radial-gradient(ellipse at 50% 0%, rgba(245,166,35,0.08), transparent 60%);}
+
+  .pulse-dot{position:relative}
+  .pulse-dot::after{content:'';position:absolute;inset:0;border-radius:9999px;background:currentColor;animation:pulse-ring 1.8s cubic-bezier(.4,0,.6,1) infinite}
+  @keyframes pulse-ring{0%{transform:scale(1);opacity:.55}100%{transform:scale(2.6);opacity:0}}
+
+  .card-hover{transition:transform .35s ease, border-color .35s ease}
+  .card-hover:hover{transform:translateY(-5px);border-color:#33C2E8}
+
+  .eyebrow{letter-spacing:.16em}
+  .reveal{opacity:0}
+
+  .flow-line{position:relative;height:2px;background-image:repeating-linear-gradient(90deg,#33C2E8 0 10px,transparent 10px 20px);background-size:20px 2px;animation:flow-move .8s linear infinite}
+  @keyframes flow-move{to{background-position:-20px 0}}
+  .flow-line-v{width:2px;background-image:repeating-linear-gradient(180deg,#33C2E8 0 10px,transparent 10px 20px);background-size:2px 20px;animation:flow-move-v .8s linear infinite}
+  @keyframes flow-move-v{to{background-position:0 -20px}}
+
+  #mobile-menu{transition:max-height .35s ease, opacity .3s ease}
+
+  .faq-item[open] summary .faq-icon{transform:rotate(45deg)}
+  summary::-webkit-details-marker{display:none}
+  .faq-icon{transition:transform .3s ease}
+
+  @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+</style>
+</head>
+<body class="bg-base text-txprimary antialiased">
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 border-b border-line bg-base/85 backdrop-blur-md">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
+    <a href="#home" class="flex items-center gap-2.5">
+      <span class="w-7 h-7 rounded-md bg-cyan/10 border border-cyan/30 flex items-center justify-center font-display font-bold text-cyan text-sm">S</span>
+      <span class="font-display font-semibold text-sm tracking-tight">SISTEMA DE MONITORAMENTO</span>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-8 font-mono text-xs eyebrow text-txsecondary">
+      <a href="#solucao" class="hover:text-txprimary transition-colors">SOLUÇÃO</a>
+      <a href="#arquitetura" class="hover:text-txprimary transition-colors">ARQUITETURA</a>
+      <a href="#funcionalidades" class="hover:text-txprimary transition-colors">FUNCIONALIDADES</a>
+      <a href="#investimento" class="hover:text-txprimary transition-colors">INVESTIMENTO</a>
+      <a href="#cronograma" class="hover:text-txprimary transition-colors">CRONOGRAMA</a>
+      <a href="#faq" class="hover:text-txprimary transition-colors">FAQ</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href="growth-tech-empresa.html" class="hidden sm:flex items-center gap-2 bg-surface border border-line hover:border-amber rounded-full pl-1.5 pr-3.5 py-1.5 font-mono text-[11px] eyebrow transition-colors">
+        <span class="w-6 h-6 rounded-full bg-amber/15 text-amber flex items-center justify-center">←</span>
+        GROWTH TECH
+      </a>
+      <button id="menu-toggle" class="lg:hidden w-9 h-9 flex items-center justify-center border border-line rounded-md" aria-label="Abrir menu">
+        <span class="font-mono text-sm">☰</span>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="lg:hidden overflow-hidden max-h-0 opacity-0 border-t border-line bg-base">
+    <nav class="flex flex-col px-5 py-4 gap-4 font-mono text-xs eyebrow text-txsecondary">
+      <a href="#solucao">SOLUÇÃO</a>
+      <a href="#arquitetura">ARQUITETURA</a>
+      <a href="#funcionalidades">FUNCIONALIDADES</a>
+      <a href="#investimento">INVESTIMENTO</a>
+      <a href="#cronograma">CRONOGRAMA</a>
+      <a href="#faq">FAQ</a>
+      <a href="growth-tech-empresa.html" class="text-amber">← GROWTH TECH</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="home" class="relative pt-40 pb-24 md:pt-48 md:pb-32 blueprint noise-fade overflow-hidden">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
+    <div>
+      <p class="reveal font-mono text-xs eyebrow text-cyan mb-5">// SISTEMA INTELIGENTE DE MONITORAMENTO</p>
+      <h1 class="reveal font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight mb-6">
+        Monitoramento ambiental <span class="text-amber">automatizado</span>, do sensor ao alerta.
+      </h1>
+      <p class="reveal text-txsecondary text-base md:text-lg max-w-xl leading-relaxed mb-9">
+        Sensores conectados capturam variáveis críticas da operação em tempo real, disparam alertas
+        automáticos e alimentam dashboards vivos — na web e no bolso, via app mobile.
+      </p>
+      <div class="reveal flex flex-wrap items-center gap-4 mb-10">
+        <a href="#investimento" class="bg-amber hover:bg-amber-600 text-base font-semibold text-sm px-6 py-3.5 rounded-md transition-colors">Ver investimento</a>
+        <a href="#arquitetura" class="border border-line hover:border-cyan text-sm font-medium px-6 py-3.5 rounded-md transition-colors">Ver arquitetura →</a>
+      </div>
+      <p class="reveal font-mono text-[11px] text-txmuted flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan pulse-dot text-cyan"></span> 3 SENSORES ONLINE — LEITURA A CADA 5MIN
+      </p>
+    </div>
+
+    <div class="reveal relative">
+      <div class="rounded-xl overflow-hidden border border-line aspect-[4/5]">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1000&q=80"
+             alt="Dashboard de monitoramento ambiental industrial" class="w-full h-full object-cover" loading="lazy">
+      </div>
+      <div class="absolute -bottom-5 -left-5 bg-surface border border-line rounded-lg px-4 py-3 font-mono text-[11px] text-txsecondary shadow-xl">
+        <span class="text-amber">●</span> ALERTA <span class="text-txprimary">CONFIGURADO</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEMA / SOLUÇÃO ============ -->
+<section id="solucao" class="py-24 md:py-32 border-t border-line">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 grid lg:grid-cols-2 gap-8">
+    <div class="reveal border border-line bg-surface rounded-lg p-8">
+      <p class="font-mono text-xs eyebrow text-amber mb-4">O PROBLEMA</p>
+      <h3 class="font-display text-2xl font-semibold mb-4">Controle manual, risco invisível.</h3>
+      <p class="text-txsecondary leading-relaxed">Muitos ambientes industriais ainda dependem de rondas manuais e planilhas para acompanhar
+        temperatura e umidade. Isso atrasa a detecção de falhas e gera perdas silenciosas de produto e equipamento.</p>
+    </div>
+    <div class="reveal border border-line bg-surface rounded-lg p-8">
+      <p class="font-mono text-xs eyebrow text-cyan mb-4">A SOLUÇÃO</p>
+      <h3 class="font-display text-2xl font-semibold mb-4">Monitoramento contínuo e automático.</h3>
+      <p class="text-txsecondary leading-relaxed">Uma rede de sensores IoT entrega leitura em tempo real, histórico completo e alertas automáticos —
+        substituindo a ronda manual por visibilidade contínua, na web e no celular.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ARQUITETURA ============ -->
+<section id="arquitetura" class="py-24 md:py-32 border-t border-line blueprint">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8">
+    <p class="reveal font-mono text-xs eyebrow text-cyan mb-4">// ARQUITETURA &amp; FLUXO</p>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-14">Do chão de fábrica à tela do gestor.</h2>
+
+    <div class="reveal flex flex-col lg:flex-row items-center gap-0">
+      <div class="border border-line bg-surface rounded-lg p-5 w-full lg:w-52 text-center">
+        <p class="font-mono text-[10px] text-txmuted mb-1">01</p>
+        <p class="font-display text-sm font-semibold">Sensores / ESP32</p>
+        <p class="font-mono text-[10px] text-txmuted mt-1">MicroPython</p>
+      </div>
+      <div class="flow-line w-12 lg:w-16 hidden lg:block"></div>
+      <div class="flow-line-v h-8 lg:hidden"></div>
+      <div class="border border-line bg-surface rounded-lg p-5 w-full lg:w-52 text-center">
+        <p class="font-mono text-[10px] text-txmuted mb-1">02</p>
+        <p class="font-display text-sm font-semibold">API / Backend</p>
+        <p class="font-mono text-[10px] text-txmuted mt-1">Nest.js</p>
+      </div>
+      <div class="flow-line w-12 lg:w-16 hidden lg:block"></div>
+      <div class="flow-line-v h-8 lg:hidden"></div>
+      <div class="border border-line bg-surface rounded-lg p-5 w-full lg:w-52 text-center">
+        <p class="font-mono text-[10px] text-txmuted mb-1">03</p>
+        <p class="font-display text-sm font-semibold">Banco de Dados</p>
+        <p class="font-mono text-[10px] text-txmuted mt-1">PostgreSQL</p>
+      </div>
+      <div class="flow-line w-12 lg:w-16 hidden lg:block"></div>
+      <div class="flow-line-v h-8 lg:hidden"></div>
+      <div class="flex flex-col gap-3 w-full lg:w-52">
+        <div class="border border-line bg-surface rounded-lg p-5 text-center">
+          <p class="font-mono text-[10px] text-txmuted mb-1">04A</p>
+          <p class="font-display text-sm font-semibold">Plataforma Web</p>
+          <p class="font-mono text-[10px] text-txmuted mt-1">Next.js</p>
+        </div>
+        <div class="border border-line bg-surface rounded-lg p-5 text-center">
+          <p class="font-mono text-[10px] text-txmuted mb-1">04B</p>
+          <p class="font-display text-sm font-semibold">App Mobile</p>
+          <p class="font-mono text-[10px] text-txmuted mt-1">Flutter</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FUNCIONALIDADES ============ -->
+<section id="funcionalidades" class="py-24 md:py-32 border-t border-line">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8">
+    <p class="reveal font-mono text-xs eyebrow text-amber mb-4">// REQUISITOS &amp; FUNCIONALIDADES</p>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-14">Dados vivos, decisão rápida.</h2>
+
+    <div class="reveal grid lg:grid-cols-5 gap-6 mb-8">
+      <div class="lg:col-span-3 border border-line bg-surface rounded-lg p-5">
+        <div class="flex items-center justify-between mb-3">
+          <p class="font-mono text-[11px] eyebrow text-txmuted">HISTÓRICO — TEMP / UMID.</p>
+          <span class="font-mono text-[10px] text-cyan">LIVE</span>
+        </div>
+        <div class="h-56"><canvas id="sensorChart"></canvas></div>
+      </div>
+      <div class="lg:col-span-2 flex flex-col gap-3" id="sensor-status-list"></div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
+        <svg class="w-5 h-5 text-amber mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <p class="font-display text-sm font-semibold mb-1">Alertas em tempo real</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Notificações automáticas ao ultrapassar limites configurados.</p>
+      </div>
+      <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
+        <svg class="w-5 h-5 text-cyan mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+        <p class="font-display text-sm font-semibold mb-1">Dashboards dinâmicos</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Visão consolidada por setor, sensor e período.</p>
+      </div>
+      <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
+        <svg class="w-5 h-5 text-amber mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 0-4 4v9a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/><path d="M12 17v5"/></svg>
+        <p class="font-display text-sm font-semibold mb-1">Parâmetros ambientais</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Acompanhamento de temperatura, umidade e outras variáveis críticas.</p>
+      </div>
+      <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
+        <svg class="w-5 h-5 text-cyan mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <p class="font-display text-sm font-semibold mb-1">Histórico de dados</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Registro contínuo para auditoria, análise e relatórios.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INVESTIMENTO ============ -->
+<section id="investimento" class="py-24 md:py-32 border-t border-line blueprint">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8">
+    <p class="reveal font-mono text-xs eyebrow text-cyan mb-4">// VIABILIDADE E INVESTIMENTO</p>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-2">Investimento total estimado</h2>
+    <p class="reveal font-display text-4xl md:text-5xl font-semibold text-amber mb-14">R$ 32.109,00</p>
+
+    <div class="grid lg:grid-cols-2 gap-6 mb-14">
+      <div class="reveal border border-line bg-surface rounded-lg p-5 h-72">
+        <canvas id="investChart"></canvas>
+      </div>
+      <div class="reveal flex flex-col gap-2.5 font-mono text-xs justify-center" id="invest-list"></div>
+    </div>
+
+    <div class="reveal border border-line rounded-lg overflow-hidden">
+      <div class="grid grid-cols-3 bg-elevated font-mono text-[11px] eyebrow text-txmuted px-5 py-3">
+        <span>DIMENSÃO</span><span>MONITORAMENTO MANUAL</span><span class="text-cyan">SISTEMA GROWTH TECH</span>
+      </div>
+      <div class="grid grid-cols-3 px-5 py-4 border-t border-line text-sm">
+        <span class="text-txsecondary">Detecção de falha</span><span class="text-txsecondary">Horas ou dias</span><span class="text-txprimary">Segundos, em tempo real</span>
+      </div>
+      <div class="grid grid-cols-3 px-5 py-4 border-t border-line text-sm">
+        <span class="text-txsecondary">Histórico de dados</span><span class="text-txsecondary">Planilhas manuais</span><span class="text-txprimary">Registro automático e contínuo</span>
+      </div>
+      <div class="grid grid-cols-3 px-5 py-4 border-t border-line text-sm">
+        <span class="text-txsecondary">Custo recorrente</span><span class="text-txsecondary">Horas de ronda humana</span><span class="text-txprimary">Investimento fixo único</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CRONOGRAMA ============ -->
+<section id="cronograma" class="py-24 md:py-32 border-t border-line">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 max-w-4xl">
+    <p class="reveal font-mono text-xs eyebrow text-amber mb-4">// CRONOGRAMA / METODOLOGIA</p>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-14">Quatro fases até a entrega.</h2>
+    <div id="timeline-list" class="relative pl-8 border-l border-line"></div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="py-24 md:py-32 border-t border-line blueprint">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 max-w-3xl">
+    <p class="reveal font-mono text-xs eyebrow text-cyan mb-4">// SUPORTE &amp; RESPOSTAS</p>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-12">Perguntas frequentes.</h2>
+    <div id="faq-list" class="reveal divide-y divide-line border-t border-b border-line"></div>
+  </div>
+</section>
+
+<!-- ============ CONTATO / FOOTER ============ -->
+<section id="contato" class="py-24 md:py-28 border-t border-line">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 text-center">
+    <p class="reveal font-mono text-xs eyebrow text-amber mb-4">// GET IN TOUCH</p>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-6 max-w-2xl mx-auto">Pronto para monitorar sua operação em tempo real?</h2>
+    <div class="reveal flex flex-wrap items-center justify-center gap-4">
+      <a href="mailto:contato@growthtech.com" class="bg-amber hover:bg-amber-600 text-base font-semibold text-sm px-6 py-3.5 rounded-md transition-colors">contato@growthtech.com</a>
+      <a href="growth-tech-empresa.html" class="border border-line hover:border-cyan text-sm font-medium px-6 py-3.5 rounded-md transition-colors">← Conhecer a Growth Tech</a>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-line py-10">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[11px] text-txmuted">
+    <span>© 2026 GROWTH TECH · SISTEMA DE MONITORAMENTO INTELIGENTE</span>
+    <span>SENAI FÉLIX GUISARD — TAUBATÉ / SP</span>
+  </div>
+</footer>
+
+<script>
+/* ============ DATA ============ */
+const SENSORS = [
+  { name: "Temperatura — Setor A", unit: "°C", base: 24.5, color: "amber" },
+  { name: "Umidade — Setor A", unit: "%", base: 58, color: "cyan" },
+  { name: "Temperatura — Setor B", unit: "°C", base: 26.1, color: "amber" },
+];
+const INVEST = [
+  { label: "Hardware (sensores, ESP32)", value: 11500, color: "#33C2E8" },
+  { label: "Desenvolvimento de software", value: 13200, color: "#F5A623" },
+  { label: "Infraestrutura & hospedagem", value: 4200, color: "#5B9DF0" },
+  { label: "Testes & documentação", value: 3209, color: "#8892A0" },
+];
+const TIMELINE = [
+  { phase: "Fase 1", title: "Levantamento & Prototipagem", desc: "Definição de requisitos e protótipo do sensor com ESP32." },
+  { phase: "Fase 2", title: "Backend & Banco de Dados", desc: "API em Nest.js integrada ao PostgreSQL, ingestão dos dados dos sensores." },
+  { phase: "Fase 3", title: "Plataforma Web & Mobile", desc: "Dashboards em Next.js e aplicativo em Flutter conectados à API." },
+  { phase: "Fase 4", title: "Testes & Entrega", desc: "Validação em campo, ajustes finos e entrega documentada." },
+];
+const FAQ = [
+  { q: "Como os sensores enviam os dados?", a: "Os módulos ESP32, com firmware em MicroPython, capturam as leituras e enviam periodicamente para a API via rede Wi-Fi local." },
+  { q: "Os alertas funcionam fora do horário comercial?", a: "Sim. O monitoramento é contínuo, 24 horas por dia, e os alertas são disparados automaticamente sempre que um parâmetro sai da faixa configurada." },
+  { q: "É possível acompanhar pelo celular?", a: "Sim, o aplicativo mobile em Flutter espelha os principais indicadores do dashboard web em tempo real." },
+  { q: "O sistema pode ser expandido para mais setores?", a: "Sim, a arquitetura foi pensada para escalar — basta adicionar novos sensores à mesma rede e ao mesmo backend." },
+];
+
+/* ============ SENSOR STATUS ============ */
+const statusList = document.getElementById('sensor-status-list');
+SENSORS.forEach((s,i)=>{
+  const row = document.createElement('div');
+  row.className = "border border-line bg-surface rounded-lg p-4 flex items-center justify-between";
+  row.innerHTML = `
+    <div>
+      <p class="text-xs font-medium">${s.name}</p>
+      <p class="font-mono text-[10px] text-txmuted mt-0.5">STATUS: ONLINE</p>
+    </div>
+    <div class="text-right flex items-center gap-2">
+      <span class="w-1.5 h-1.5 rounded-full bg-${s.color} pulse-dot text-${s.color}"></span>
+      <span id="sensor-val-${i}" class="font-mono text-sm text-${s.color}">${s.base.toFixed(1)}${s.unit}</span>
+    </div>`;
+  statusList.appendChild(row);
+});
+setInterval(()=>{
+  SENSORS.forEach((s,i)=>{
+    const el = document.getElementById('sensor-val-'+i);
+    if(!el) return;
+    el.textContent = (s.base + (Math.random()-0.5)*2).toFixed(1) + s.unit;
+  });
+}, 2200);
+
+/* ============ INVEST LIST ============ */
+const investList = document.getElementById('invest-list');
+INVEST.forEach(it=>{
+  const row = document.createElement('div');
+  row.className = "flex items-center justify-between border-b border-line/60 pb-2.5";
+  row.innerHTML = `<span class="flex items-center gap-2 text-txsecondary"><span class="w-2 h-2 rounded-sm" style="background:${it.color}"></span>${it.label}</span><span class="text-txprimary">R$ ${it.value.toLocaleString('pt-BR')}</span>`;
+  investList.appendChild(row);
+});
+
+/* ============ TIMELINE ============ */
+const timelineList = document.getElementById('timeline-list');
+TIMELINE.forEach((t,i)=>{
+  const row = document.createElement('div');
+  row.className = "reveal relative pb-10 last:pb-0";
+  row.innerHTML = `
+    <span class="absolute -left-[37px] top-0 w-4 h-4 rounded-full bg-base border-2 border-amber"></span>
+    <p class="font-mono text-xs text-amber mb-1">${t.phase}</p>
+    <p class="font-display font-semibold mb-1">${t.title}</p>
+    <p class="text-sm text-txsecondary leading-relaxed">${t.desc}</p>`;
+  timelineList.appendChild(row);
+});
+
+/* ============ FAQ ============ */
+const faqList = document.getElementById('faq-list');
+FAQ.forEach(item=>{
+  const el = document.createElement('details');
+  el.className = "faq-item py-5 group";
+  el.innerHTML = `
+    <summary class="flex items-center justify-between cursor-pointer list-none">
+      <span class="font-display font-medium pr-6">${item.q}</span>
+      <span class="faq-icon font-mono text-cyan text-lg shrink-0">+</span>
+    </summary>
+    <p class="text-sm text-txsecondary leading-relaxed mt-3 pr-8">${item.a}</p>`;
+  faqList.appendChild(el);
+});
+
+/* ============ MOBILE MENU ============ */
+const menuToggle = document.getElementById('menu-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+let menuOpen = false;
+menuToggle.addEventListener('click', ()=>{
+  menuOpen = !menuOpen;
+  mobileMenu.style.maxHeight = menuOpen ? mobileMenu.scrollHeight+'px' : '0px';
+  mobileMenu.style.opacity = menuOpen ? '1' : '0';
+});
+mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{
+  menuOpen=false; mobileMenu.style.maxHeight='0px'; mobileMenu.style.opacity='0';
+}));
+
+/* ============ CHARTS ============ */
+Chart.defaults.color = '#96A0AC';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.size = 10;
+
+let sensorLabels = Array.from({length:10},(_,i)=>`-${(10-i)*5}min`);
+let tempData = Array.from({length:10},()=> (24+Math.random()*3).toFixed(1));
+let humidData = Array.from({length:10},()=> (55+Math.random()*6).toFixed(1));
+
+const sensorChart = new Chart(document.getElementById('sensorChart'), {
+  type: 'line',
+  data: { labels: sensorLabels, datasets: [
+    { label:'Temp °C', data: tempData, borderColor:'#F5A623', backgroundColor:'rgba(245,166,35,0.08)', tension:.35, pointRadius:0, borderWidth:2, fill:true },
+    { label:'Umid. %', data: humidData, borderColor:'#33C2E8', backgroundColor:'rgba(51,194,232,0.08)', tension:.35, pointRadius:0, borderWidth:2, fill:true },
+  ]},
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ position:'bottom', labels:{boxWidth:8,boxHeight:8,padding:12} } },
+    scales:{ x:{ grid:{color:'#1D242B'}, ticks:{maxTicksLimit:5} }, y:{ grid:{color:'#1D242B'} } } }
+});
+setInterval(()=>{
+  sensorChart.data.datasets[0].data.shift(); sensorChart.data.datasets[0].data.push((24+Math.random()*3).toFixed(1));
+  sensorChart.data.datasets[1].data.shift(); sensorChart.data.datasets[1].data.push((55+Math.random()*6).toFixed(1));
+  sensorChart.update('none');
+}, 2200);
+
+new Chart(document.getElementById('investChart'), {
+  type: 'doughnut',
+  data: { labels: INVEST.map(i=>i.label), datasets: [{ data: INVEST.map(i=>i.value), backgroundColor: INVEST.map(i=>i.color), borderColor:'#12161B', borderWidth:3 }] },
+  options: { responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{ legend:{ display:false } } }
+});
+
+/* ============ SCROLL REVEAL ============ */
+gsap.registerPlugin(ScrollTrigger);
+document.querySelectorAll('.reveal').forEach(el=>{
+  gsap.fromTo(el, {opacity:0,y:28}, {
+    opacity:1, y:0, duration:.7, ease:'power2.out',
+    scrollTrigger:{ trigger: el, start:'top 88%', toggleActions:'play none none reverse' }
+  });
+});
+</script>
+</body>
+</html>
