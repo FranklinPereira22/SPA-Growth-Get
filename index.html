@@ -116,7 +116,13 @@
 
 <!-- ============ HERO ============ -->
 <section id="home" class="relative pt-40 pb-24 md:pt-48 md:pb-32 blueprint noise-fade overflow-hidden">
-  <div class="max-w-[1440px] mx-auto px-5 md:px-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
+  
+  <!-- CONTAINER DA ANIMAÇÃO REACTIVE LINES (ORIGINKIT) -->
+  <div id="interactive-lines-container" class="absolute inset-0 w-full h-full pointer-events-none z-0">
+    <canvas id="interactive-lines-canvas" class="w-full h-full block"></canvas>
+  </div>
+
+  <div class="relative z-10 max-w-[1440px] mx-auto px-5 md:px-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
     <div>
       <p class="reveal font-mono text-xs eyebrow text-amber mb-5">// LABORATÓRIO DE ENGENHARIA IOT</p>
       <h1 class="reveal font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight mb-6">
@@ -281,11 +287,234 @@
   </div>
 </div>
 
+<!-- ============ SCRIPT DA ANIMAÇÃO ORIGINKIT (REACTIVE LINES) ============ -->
 <script>
-/* ============ TEAM DATA ============
-   Para adicionar as fotos reais, salve os arquivos com estes nomes exatos
-   na pasta "assets/team/" ao lado deste HTML. Enquanto a foto não existir,
-   um avatar com as iniciais é exibido automaticamente. */
+(function() {
+  const container = document.getElementById('interactive-lines-container');
+  const canvas = document.getElementById('interactive-lines-canvas');
+  if (!container || !canvas) return;
+
+  const ctx = canvas.getContext('2d', { alpha: false });
+  if (!ctx) return;
+
+  // Configurações padrão do componente Reactive Lines (Originkit)
+  const backgroundColor = 'rgb(10, 10, 10)';
+  const lineColor = '#F5A528';
+  const lineWidth = 0.5;
+  const minLines = 108;
+  const maxLines = 15;
+  const fade = false;
+  const fadeIntensity = 15;
+
+  // Utilitários de Vetores e Matemática
+  const vec = (x, y) => ({ x, y });
+  const vecAdd = (a, b) => ({ x: a.x + b.x, y: a.y + b.y });
+  const vecSub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y });
+  const vecMult = (a, s) => ({ x: a.x * s, y: a.y * s });
+  const vecLerp = (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, mn, mx) => Math.max(mn, Math.min(mx, v));
+  const map = (v, a, b, c, d) => ((v - a) / (b - a)) * (d - c) + c;
+
+  function toRGB(str) {
+    if (str) {
+      const m = str.match(/rgba?\(([^)]+)\)/);
+      if (m) {
+        const p = m[1].split(",").map((s) => parseFloat(s));
+        return { r: p[0] || 0, g: p[1] || 0, b: p[2] || 0 };
+      }
+      const hex = str.replace("#", "");
+      if (hex.length >= 6)
+        return { r: parseInt(hex.slice(0, 2), 16), g: parseInt(hex.slice(2, 4), 16), b: parseInt(hex.slice(4, 6), 16) };
+      if (hex.length === 3)
+        return { r: parseInt(hex[0] + hex[0], 16), g: parseInt(hex[1] + hex[1], 16), b: parseInt(hex[2] + hex[2], 16) };
+    }
+    return { r: 10, g: 10, b: 10 };
+  }
+
+  // Estados do Canvas e Interação
+  const state = { width: 0, height: 0, dpr: 1, isVisible: true, isPageVisible: true, animationId: 0 };
+  const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+  const cfg = { linesNum: 40, bias: 0.5 };
+  let started = false;
+
+  function setup() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = container.getBoundingClientRect();
+    state.width = rect.width;
+    state.height = rect.height;
+    state.dpr = dpr;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Setup das posições do mouse (Originkit initial target)
+    mouse.targetX = state.width / 2;
+    mouse.targetY = state.height / 2;
+    mouse.x = state.width / 2;
+    mouse.y = state.height / 2;
+  }
+
+  function draw() {
+    let r = state.width;
+    let n = state.height;
+
+    mouse.x = mouse.x + (mouse.targetX - mouse.x) * 0.05;
+    mouse.y = mouse.y + (mouse.targetY - mouse.y) * 0.1;
+
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, r, n);
+
+    ctx.save();
+    ctx.translate(r / 2, n / 2);
+
+    let s = r < 500;
+    let u = s ? 0.8 * n : 0;
+    let d = s ? 1.5 : 0.7;
+
+    let c = vec(r, -(1.1 * n) + u);
+    let f = vec(0, 2 * n);
+    let g = vec(-r, -n + u);
+
+    let lo = Math.min(minLines, maxLines);
+    let hi = Math.max(minLines, maxLines);
+    let h = clamp(map(mouse.y, 0, n, lo, hi), lo, hi);
+    cfg.linesNum = lerp(cfg.linesNum, h, 0.1);
+
+    let b = clamp(map(mouse.x, 0, r, 0.6, 0.4), 0.4, 0.6);
+    cfg.bias = lerp(cfg.bias, b, 0.05);
+
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = lineWidth;
+
+    for (let t = 0; t < cfg.linesNum; t++) {
+      let rRatio = t / (cfg.linesNum - 1 || 1);
+
+      let lineEnd = vec(
+        lerp(f.x, g.x, 1 - rRatio * rRatio),
+        lerp(f.y, g.y, 1 - rRatio * rRatio)
+      );
+
+      let l = vecAdd(vecMult(c, 0.5), vecMult(lineEnd, 0.5));
+      let dispTarget = vecMult(vecAdd(f, l), 0.5);
+
+      (function (e, p1, p2, disp, biasVal, dVal) {
+        let o = vecLerp(p1, p2, 0.5);
+        let shift = vecSub(disp, o);
+
+        e.beginPath();
+        for (let idx = 0; idx <= 50; idx++) {
+          let step = idx / 50;
+          let uVec = vecLerp(p1, p2, step);
+          let dFactor =
+            2 *
+            Math.pow(step, dVal * (1 - biasVal) * 2) *
+            Math.pow(1 - step, dVal * biasVal * 2);
+          let cv = vecAdd(uVec, vecMult(shift, dFactor));
+          idx === 0 ? e.moveTo(cv.x, cv.y) : e.lineTo(cv.x, cv.y);
+        }
+        e.stroke();
+      })(ctx, c, lineEnd, dispTarget, cfg.bias, d);
+    }
+
+    ctx.restore();
+
+    if (fade) {
+      const bg = toRGB(backgroundColor);
+      const rgba = (alpha) => `rgba(${bg.r}, ${bg.g}, ${bg.b}, ${alpha})`;
+      const inner = clamp(map(fadeIntensity, 1, 50, 0.82, 0.25), 0.25, 0.82);
+      const maxA = clamp(map(fadeIntensity, 1, 50, 0.35, 0.9), 0.35, 0.9);
+      ctx.save();
+      let y = r / 2;
+      let v = n / 2;
+      let x = Math.max(r, n) / 2;
+      ctx.translate(y, v);
+      ctx.scale(r / (2 * x), n / (2 * x));
+      let _ = ctx.createRadialGradient(0, 0, 0, 0, 0, x);
+      _.addColorStop(0, rgba(0));
+      _.addColorStop(inner, rgba(0));
+      _.addColorStop(lerp(inner, 1, 0.5), rgba(maxA * 0.3));
+      _.addColorStop(lerp(inner, 1, 0.8), rgba(maxA * 0.7));
+      _.addColorStop(1, rgba(maxA));
+      ctx.fillStyle = _;
+      ctx.fillRect(-x, -x, 2 * x, 2 * x);
+      ctx.restore();
+    }
+  }
+
+  function loop() {
+    draw();
+    state.animationId = requestAnimationFrame(loop);
+  }
+
+  function start() {
+    if (!state.animationId && state.isVisible && state.isPageVisible) {
+      state.animationId = requestAnimationFrame(loop);
+    }
+  }
+
+  function stop() {
+    if (state.animationId) {
+      cancelAnimationFrame(state.animationId);
+      state.animationId = 0;
+    }
+  }
+
+  setup();
+
+  // Event Listeners baseados nas regras do componente React
+  let debTimer;
+  const onResize = () => {
+    clearTimeout(debTimer);
+    debTimer = setTimeout(() => {
+      stop();
+      setup();
+      start();
+    }, 100);
+  };
+
+  const onPageVis = () => {
+    state.isPageVisible = document.visibilityState === "visible";
+    state.isPageVisible ? start() : stop();
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    state.isVisible = entries[0]?.isIntersecting ?? true;
+    state.isVisible && state.isPageVisible ? start() : stop();
+  }, { threshold: 0 });
+
+  io.observe(container);
+  window.addEventListener("resize", onResize, { passive: true });
+  document.addEventListener("visibilitychange", onPageVis);
+
+  let rect = container.getBoundingClientRect();
+  const onMouseMove = (ev) => {
+    if (!state.isVisible) return;
+    mouse.targetX = ev.clientX - rect.left;
+    mouse.targetY = ev.clientY - rect.top;
+    if (!started) {
+      started = true;
+      start();
+    }
+  };
+
+  let scrollAnimFrame = 0;
+  const onScroll = () => {
+    scrollAnimFrame ||
+      (scrollAnimFrame = requestAnimationFrame(() => {
+        rect = container.getBoundingClientRect();
+        scrollAnimFrame = 0;
+      }));
+  };
+
+  document.addEventListener("mousemove", onMouseMove, { passive: true });
+  window.addEventListener("scroll", onScroll, { passive: true });
+})();
+</script>
+
+<!-- ============ DEMAIS SCRIPTS DO SITE ============ -->
+<script>
+/* ============ TEAM DATA ============ */
 const TEAM = [
   { name: "Cauã De Souza Gomes", role: "Dev Web", photo: "assets/team/caua-souza-gomes.jpg",
     detail: "Responsável pela plataforma web em Next.js — dashboards, autenticação e integração com a API." },
