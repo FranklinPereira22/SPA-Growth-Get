@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema Inteligente de Monitoramento | Growth Get</title>
-<meta name="description" content="Sistema Inteligente de Monitoramento Ambiental — sensores ESP32, API Nest.js, PostgreSQL, Web Next.js e App Flutter.">
+<title>Sistema Inteligente de Monitoramento | InduSense</title>
+<meta name="description" content="Sistema Inteligente de Monitoramento de Ambientes Industriais InduSense — sensores ESP32, câmeras com Inteligência Artificial, API Nest.js, PostgreSQL, Web Next.js e App Flutter.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,6 +60,20 @@
   .card-hover{transition:transform .35s ease, border-color .35s ease}
   .card-hover:hover{transform:translateY(-5px);border-color:#33C2E8}
 
+  /* Mockup hover animations */
+  .mockup-container { perspective: 1000px; }
+  .device-laptop { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease; }
+  .device-phone { transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease; }
+  
+  .mockup-container:hover .device-laptop {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-2deg) scale(1.01);
+    box-shadow: 0 25px 50px -12px rgba(51, 194, 232, 0.15);
+  }
+  .mockup-container:hover .device-phone {
+    transform: translateY(-15px) rotateX(4deg) rotateY(4deg) scale(1.04);
+    box-shadow: 0 30px 60px -12px rgba(245, 166, 35, 0.2);
+  }
+
   .eyebrow{letter-spacing:.16em}
   .reveal{opacity:0}
 
@@ -83,8 +97,8 @@
 <header class="fixed top-0 inset-x-0 z-50 border-b border-line bg-base/85 backdrop-blur-md">
   <div class="max-w-[1440px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
     <a href="#home" class="flex items-center gap-2.5">
-      <span class="w-7 h-7 rounded-md bg-cyan/10 border border-cyan/30 flex items-center justify-center font-display font-bold text-cyan text-sm">S</span>
-      <span class="font-display font-semibold text-sm tracking-tight">SISTEMA DE MONITORAMENTO</span>
+      <span class="w-7 h-7 rounded-md bg-cyan/10 border border-cyan/30 flex items-center justify-center font-display font-bold text-cyan text-sm">I</span>
+      <span class="font-display font-semibold text-sm tracking-tight">INDUSENSE</span>
     </a>
 
     <nav class="hidden lg:flex items-center gap-8 font-mono text-xs eyebrow text-txsecondary">
@@ -119,36 +133,64 @@
   </div>
 </header>
 
-<!-- ============ HERO ============ -->
-<section id="home" class="relative pt-40 pb-24 md:pt-48 md:pb-32 blueprint noise-fade overflow-hidden">
-  <div class="max-w-[1440px] mx-auto px-5 md:px-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
+<!-- ============ HERO COM MOCKUP (NOTEBOOK + CELULAR COM HOVER) ============ -->
+<section id="home" class="relative pt-36 pb-24 md:pt-44 md:pb-32 blueprint noise-fade overflow-hidden">
+  <div class="max-w-[1440px] mx-auto px-5 md:px-8 grid lg:grid-cols-[1.1fr_1.1fr] gap-12 items-center">
+    
+    <!-- Textos do Hero -->
     <div>
-      <p class="reveal font-mono text-xs eyebrow text-cyan mb-5">// SISTEMA INTELIGENTE DE MONITORAMENTO</p>
+      <p class="reveal font-mono text-xs eyebrow text-cyan mb-5">// INDUSENSE — MONITORE. ANALISE. PROTEJA. EVOLUA.</p>
       <h1 class="reveal font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.05] tracking-tight mb-6">
-        Monitoramento ambiental <span class="text-amber">automatizado</span>, do sensor ao alerta.
+        Monitoramento industrial inteligente, <span class="text-amber">com sensores e IA</span>.
       </h1>
       <p class="reveal text-txsecondary text-base md:text-lg max-w-xl leading-relaxed mb-9">
-        Sensores conectados capturam variáveis críticas da operação em tempo real, disparam alertas
-        automáticos e alimentam dashboards vivos — na web e no bolso, via app mobile.
+        Sistema integrado que une sensores ESP32, câmeras com Inteligência Artificial para verificação de EPIs,
+        plataforma Web em Next.js e aplicativo em Flutter para transformar dados em decisões seguras e ágeis.
       </p>
       <div class="reveal flex flex-wrap items-center gap-4 mb-10">
         <a href="#investimento" class="bg-amber hover:bg-amber-600 text-base font-semibold text-sm px-6 py-3.5 rounded-md transition-colors">Ver investimento</a>
         <a href="#arquitetura" class="border border-line hover:border-cyan text-sm font-medium px-6 py-3.5 rounded-md transition-colors">Ver arquitetura →</a>
       </div>
       <p class="reveal font-mono text-[11px] text-txmuted flex items-center gap-2">
-        <span class="w-1.5 h-1.5 rounded-full bg-cyan pulse-dot text-cyan"></span> 3 SENSORES ONLINE — LEITURA A CADA 5MIN
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan pulse-dot text-cyan"></span> SENSORES &amp; CÂMERAS COM IA ONLINE — TEMPO REAL
       </p>
     </div>
 
-    <div class="reveal relative">
-      <div class="rounded-xl overflow-hidden border border-line aspect-[4/5]">
-        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1000&q=80"
-             alt="Dashboard de monitoramento ambiental industrial" class="w-full h-full object-cover" loading="lazy">
-      </div>
-      <div class="absolute -bottom-5 -left-5 bg-surface border border-line rounded-lg px-4 py-3 font-mono text-[11px] text-txsecondary shadow-xl">
-        <span class="text-amber">●</span> ALERTA <span class="text-txprimary">CONFIGURADO</span>
+    <!-- Mockup Interativo Notebook + Celular (Sem corte na imagem 1919x937) -->
+    <div class="reveal relative mockup-container py-8 px-4 flex justify-center items-center">
+      <div class="relative w-full max-w-[650px] flex items-center justify-center">
+        
+        <!-- Notebook Mockup (Desktop) ajustado para proporção sem corte -->
+        <div class="device-laptop w-full rounded-2xl border-2 border-line bg-surface p-2.5 shadow-2xl relative z-10">
+          <div class="bg-elevated rounded-t-lg px-3 py-1.5 flex items-center gap-1.5 border-b border-line mb-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80 inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-green-500/80 inline-block"></span>
+            <span class="ml-2 font-mono text-[10px] text-txmuted">indusense.app/dashboard</span>
+          </div>
+          <!-- Container ajustado com aspect-[1919/937] e object-contain para exibir 100% da print -->
+          <div class="rounded-lg overflow-hidden border border-line aspect-[1919/937] bg-base flex items-center justify-center">
+            <img src="assets/site.png"
+                 alt="Dashboard Web InduSense" class="w-full h-full object-contain opacity-90 hover:opacity-100 transition-opacity">
+          </div>
+          <!-- Base do Notebook -->
+          <div class="h-3 bg-elevated rounded-b-xl mx-auto w-1/3 mt-2 border-t border-line"></div>
+        </div>
+
+        <!-- Celular Mockup (Mobile) -->
+        <div class="device-phone absolute -bottom-8 -right-4 sm:-right-8 w-36 sm:w-48 rounded-[2rem] border-4 border-line bg-surface p-1.5 shadow-2xl z-20">
+          <div class="bg-base rounded-[1.6rem] overflow-hidden border border-line aspect-[9/19] relative">
+            <div class="absolute top-2 inset-x-0 flex justify-center z-30">
+              <div class="w-16 h-3 bg-line rounded-full"></div>
+            </div>
+            <img src="assets/mobile1.jpg"
+                 alt="App Mobile InduSense" class="w-full h-full object-cover">
+          </div>
+        </div>
+
       </div>
     </div>
+
   </div>
 </section>
 
@@ -157,15 +199,13 @@
   <div class="max-w-[1440px] mx-auto px-5 md:px-8 grid lg:grid-cols-2 gap-8">
     <div class="reveal border border-line bg-surface rounded-lg p-8">
       <p class="font-mono text-xs eyebrow text-amber mb-4">O PROBLEMA</p>
-      <h3 class="font-display text-2xl font-semibold mb-4">Controle manual, risco invisível.</h3>
-      <p class="text-txsecondary leading-relaxed">Muitos ambientes industriais ainda dependem de rondas manuais e planilhas para acompanhar
-        temperatura e umidade. Isso atrasa a detecção de falhas e gera perdas silenciosas de produto e equipamento.</p>
+      <h3 class="font-display text-2xl font-semibold mb-4">Controle manual, riscos invisíveis e perdas.</h3>
+      <p class="text-txsecondary leading-relaxed">Ambientes industriais enfrentam desafios severos com estresse térmico, falhas na utilização de Equipamentos de Proteção Individual (EPIs) e rondas manuais descentralizadas. Respostas tardias aumentam acidentes e reduzem a produtividade de forma silenciosa.</p>
     </div>
     <div class="reveal border border-line bg-surface rounded-lg p-8">
-      <p class="font-mono text-xs eyebrow text-cyan mb-4">A SOLUÇÃO</p>
-      <h3 class="font-display text-2xl font-semibold mb-4">Monitoramento contínuo e automático.</h3>
-      <p class="text-txsecondary leading-relaxed">Uma rede de sensores IoT entrega leitura em tempo real, histórico completo e alertas automáticos —
-        substituindo a ronda manual por visibilidade contínua, na web e no celular.</p>
+      <p class="font-mono text-xs eyebrow text-cyan mb-4">A SOLUÇÃO (INDUSENSE)</p>
+      <h3 class="font-display text-2xl font-semibold mb-4">IoT, Câmeras com IA e Visibilidade Total.</h3>
+      <p class="text-txsecondary leading-relaxed">O InduSense integra sensores ESP32 para monitoramento ambiental contínuo e câmeras com Inteligência Artificial para auxiliar na verificação do uso de EPIs (capacete, óculos, luvas e colete), centralizando tudo em dashboards web e mobile.</p>
     </div>
   </div>
 </section>
@@ -179,8 +219,8 @@
     <div class="reveal flex flex-col lg:flex-row items-center gap-0">
       <div class="border border-line bg-surface rounded-lg p-5 w-full lg:w-52 text-center">
         <p class="font-mono text-[10px] text-txmuted mb-1">01</p>
-        <p class="font-display text-sm font-semibold">Sensores / ESP32</p>
-        <p class="font-mono text-[10px] text-txmuted mt-1">MicroPython</p>
+        <p class="font-display text-sm font-semibold">Sensores / Câmeras + IA</p>
+        <p class="font-mono text-[10px] text-txmuted mt-1">ESP32 / OpenCV</p>
       </div>
       <div class="flow-line w-12 lg:w-16 hidden lg:block"></div>
       <div class="flow-line-v h-8 lg:hidden"></div>
@@ -218,12 +258,12 @@
 <section id="funcionalidades" class="py-24 md:py-32 border-t border-line">
   <div class="max-w-[1440px] mx-auto px-5 md:px-8">
     <p class="reveal font-mono text-xs eyebrow text-amber mb-4">// REQUISITOS &amp; FUNCIONALIDADES</p>
-    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-14">Dados vivos, decisão rápida.</h2>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-14">Dados vivos, IA e decisão rápida.</h2>
 
     <div class="reveal grid lg:grid-cols-5 gap-6 mb-8">
       <div class="lg:col-span-3 border border-line bg-surface rounded-lg p-5">
         <div class="flex items-center justify-between mb-3">
-          <p class="font-mono text-[11px] eyebrow text-txmuted">HISTÓRICO — TEMP / UMID.</p>
+          <p class="font-mono text-[11px] eyebrow text-txmuted">HISTÓRICO — TEMP / UMID. / QUALIDADE DO AR</p>
           <span class="font-mono text-[10px] text-cyan">LIVE</span>
         </div>
         <div class="h-56"><canvas id="sensorChart"></canvas></div>
@@ -233,24 +273,24 @@
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
       <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
-        <svg class="w-5 h-5 text-amber mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <svg class="w-5 h-5 text-amber mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <p class="font-display text-sm font-semibold mb-1">Câmeras com IA</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Verificação automatizada do uso correto de EPIs (capacete, óculos, luvas e colete).</p>
+      </div>
+      <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
+        <svg class="w-5 h-5 text-cyan mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
         <p class="font-display text-sm font-semibold mb-1">Alertas em tempo real</p>
-        <p class="text-xs text-txsecondary leading-relaxed">Notificações automáticas ao ultrapassar limites configurados.</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Notificações automáticas para parâmetros críticos ou ausência de EPIs.</p>
       </div>
       <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
-        <svg class="w-5 h-5 text-cyan mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+        <svg class="w-5 h-5 text-amber mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
         <p class="font-display text-sm font-semibold mb-1">Dashboards dinâmicos</p>
-        <p class="text-xs text-txsecondary leading-relaxed">Visão consolidada por setor, sensor e período.</p>
-      </div>
-      <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
-        <svg class="w-5 h-5 text-amber mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 0-4 4v9a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4Z"/><path d="M12 17v5"/></svg>
-        <p class="font-display text-sm font-semibold mb-1">Parâmetros ambientais</p>
-        <p class="text-xs text-txsecondary leading-relaxed">Acompanhamento de temperatura, umidade e outras variáveis críticas.</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Visão consolidada por setor, sensor e painel unificado Web e Mobile.</p>
       </div>
       <div class="reveal card-hover border border-line bg-surface rounded-lg p-5">
         <svg class="w-5 h-5 text-cyan mb-3" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        <p class="font-display text-sm font-semibold mb-1">Histórico de dados</p>
-        <p class="text-xs text-txsecondary leading-relaxed">Registro contínuo para auditoria, análise e relatórios.</p>
+        <p class="font-display text-sm font-semibold mb-1">Histórico e Auditoria</p>
+        <p class="text-xs text-txsecondary leading-relaxed">Registro contínuo e estruturado para análise de conformidade e relatórios.</p>
       </div>
     </div>
   </div>
@@ -261,7 +301,7 @@
   <div class="max-w-[1440px] mx-auto px-5 md:px-8">
     <p class="reveal font-mono text-xs eyebrow text-cyan mb-4">// VIABILIDADE E INVESTIMENTO</p>
     <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-2">Investimento total estimado</h2>
-    <p class="reveal font-display text-4xl md:text-5xl font-semibold text-amber mb-14">R$ 32.109,00</p>
+    <p class="reveal font-display text-4xl md:text-5xl font-semibold text-amber mb-14">R$ 42.461,01</p>
 
     <div class="grid lg:grid-cols-2 gap-6 mb-14">
       <div class="reveal border border-line bg-surface rounded-lg p-5 h-72">
@@ -272,16 +312,16 @@
 
     <div class="reveal border border-line rounded-lg overflow-hidden">
       <div class="grid grid-cols-3 bg-elevated font-mono text-[11px] eyebrow text-txmuted px-5 py-3">
-        <span>DIMENSÃO</span><span>MONITORAMENTO MANUAL</span><span class="text-cyan">SISTEMA GROWTH GET</span>
+        <span>DIMENSÃO</span><span>MONITORAMENTO MANUAL</span><span class="text-cyan">SISTEMA INDUSENSE</span>
       </div>
       <div class="grid grid-cols-3 px-5 py-4 border-t border-line text-sm">
-        <span class="text-txsecondary">Detecção de falha</span><span class="text-txsecondary">Horas ou dias</span><span class="text-txprimary">Segundos, em tempo real</span>
+        <span class="text-txsecondary">Detecção de falha</span><span class="text-txsecondary">Horas ou dias</span><span class="text-txprimary">Segundos, em tempo real com IA</span>
       </div>
       <div class="grid grid-cols-3 px-5 py-4 border-t border-line text-sm">
-        <span class="text-txsecondary">Histórico de dados</span><span class="text-txsecondary">Planilhas manuais</span><span class="text-txprimary">Registro automático e contínuo</span>
+        <span class="text-txsecondary">Verificação de EPI</span><span class="text-txsecondary">Visual humano falível</span><span class="text-txprimary">Automatizada por câmeras e IA</span>
       </div>
       <div class="grid grid-cols-3 px-5 py-4 border-t border-line text-sm">
-        <span class="text-txsecondary">Custo recorrente</span><span class="text-txsecondary">Horas de ronda humana</span><span class="text-txprimary">Investimento fixo único</span>
+        <span class="text-txsecondary">Histórico de dados</span><span class="text-txsecondary">Planilhas manuais</span><span class="text-txprimary">Registro automático em PostgreSQL</span>
       </div>
     </div>
   </div>
@@ -309,9 +349,9 @@
 <section id="contato" class="py-24 md:py-28 border-t border-line">
   <div class="max-w-[1440px] mx-auto px-5 md:px-8 text-center">
     <p class="reveal font-mono text-xs eyebrow text-amber mb-4">// GET IN TOUCH</p>
-    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-6 max-w-2xl mx-auto">Pronto para monitorar sua operação em tempo real?</h2>
+    <h2 class="reveal font-display text-3xl md:text-4xl font-semibold mb-6 max-w-2xl mx-auto">Pronto para transformar sua operação industrial com IA e IoT?</h2>
     <div class="reveal flex flex-wrap items-center justify-center gap-4">
-      <a href="mailto:contato@growthget.com" class="bg-amber hover:bg-amber-600 text-base font-semibold text-sm px-6 py-3.5 rounded-md transition-colors">contato@growthget.com</a>
+      <a href="mailto:contatogrowthget@gmail.com" class="bg-amber hover:bg-amber-600 text-base font-semibold text-sm px-6 py-3.5 rounded-md transition-colors">contatogrowthget@gmail.com</a>
       <a href="index.html" class="border border-line hover:border-cyan text-sm font-medium px-6 py-3.5 rounded-md transition-colors">← Conhecer a Growth Get</a>
     </div>
   </div>
@@ -319,7 +359,7 @@
 
 <footer class="border-t border-line py-10">
   <div class="max-w-[1440px] mx-auto px-5 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[11px] text-txmuted">
-    <span>© 2026 GROWTH GET · SISTEMA DE MONITORAMENTO INTELIGENTE</span>
+    <span>© 2026 GROWTH GET · INDUSENSE (SISTEMA INTELIGENTE DE MONITORAMENTO INDUSTRIAL)</span>
     <span>SENAI FÉLIX GUISARD — TAUBATÉ / SP</span>
   </div>
 </footer>
@@ -329,25 +369,26 @@
 const SENSORS = [
   { name: "Temperatura — Setor A", unit: "°C", base: 24.5, color: "amber" },
   { name: "Umidade — Setor A", unit: "%", base: 58, color: "cyan" },
-  { name: "Temperatura — Setor B", unit: "°C", base: 26.1, color: "amber" },
+  { name: "Qualidade do Ar (MQ-2) — Setor A", unit: "ppm", base: 43.2, color: "amber" },
 ];
 const INVEST = [
-  { label: "Hardware (sensores, ESP32)", value: 11500, color: "#33C2E8" },
-  { label: "Desenvolvimento de software", value: 13200, color: "#F5A623" },
-  { label: "Infraestrutura & hospedagem", value: 4200, color: "#5B9DF0" },
-  { label: "Testes & documentação", value: 3209, color: "#8892A0" },
+  { label: "Recursos Humanos", value: 37760, color: "#33C2E8" },
+  { label: "Desenvolvimento do Protótipo (Hardware)", value: 201.01, color: "#F5A623" },
+  { label: "Aquisição de Software", value: 1500, color: "#5B9DF0" },
+  { label: "Infraestrutura e Serviços", value: 1000, color: "#4ADE80" },
+  { label: "Testes, Instalação e Ajustes", value: 2000, color: "#8892A0" },
 ];
 const TIMELINE = [
-  { phase: "Fase 1", title: "Levantamento & Prototipagem", desc: "Definição de requisitos e protótipo do sensor com ESP32." },
-  { phase: "Fase 2", title: "Backend & Banco de Dados", desc: "API em Nest.js integrada ao PostgreSQL, ingestão dos dados dos sensores." },
-  { phase: "Fase 3", title: "Plataforma Web & Mobile", desc: "Dashboards em Next.js e aplicativo em Flutter conectados à API." },
-  { phase: "Fase 4", title: "Testes & Entrega", desc: "Validação em campo, ajustes finos e entrega documentada." },
+  { phase: "Fase 1", title: "Elaboração & Início", desc: "Escolha do projeto, levantamento de requisitos, pesquisa de mercado e definição dos objetivos[cite: 13]." },
+  { phase: "Fase 2", title: "Planejamento", desc: "Definição do escopo, orçamento, plano de comunicação e gerenciamento de riscos[cite: 13]." },
+  { phase: "Fase 3", title: "Desenvolvimento", desc: "Desenvolvimento do protótipo com ESP32, sensores, câmeras com IA, API Nest.js, PostgreSQL, Web Next.js e Mobile Flutter[cite: 13]." },
+  { phase: "Fase 4", title: "Testes e Encerramento", desc: "Testes funcionais, validação em campo, correção de falhas e documentação final[cite: 13]." },
 ];
 const FAQ = [
-  { q: "Como os sensores enviam os dados?", a: "Os módulos ESP32, com firmware em MicroPython, capturam as leituras e enviam periodicamente para a API via rede Wi-Fi local." },
-  { q: "Os alertas funcionam fora do horário comercial?", a: "Sim. O monitoramento é contínuo, 24 horas por dia, e os alertas são disparados automaticamente sempre que um parâmetro sai da faixa configurada." },
-  { q: "É possível acompanhar pelo celular?", a: "Sim, o aplicativo mobile em Flutter espelha os principais indicadores do dashboard web em tempo real." },
-  { q: "O sistema pode ser expandido para mais setores?", a: "Sim, a arquitetura foi pensada para escalar — basta adicionar novos sensores à mesma rede e ao mesmo backend." },
+  { q: "Como os sensores e câmeras enviam os dados?", a: "Os módulos ESP32 capturam as variáveis ambientais e as câmeras enviam as imagens para o módulo de Inteligência Artificial integrado à API Nest.js via rede Wi-Fi." },
+  { q: "Quais EPIs o sistema monitora por Inteligência Artificial?", a: "O sistema auxilia na identificação do uso de capacete, óculos, luvas e colete, sinalizando conformidades ou não conformidades nas interfaces." },
+  { q: "Os alertas funcionam fora do horário comercial?", a: "Sim. O monitoramento é contínuo, 24/7, e os alertas de temperatura, qualidade do ar ou ausência de EPIs são disparados imediatamente." },
+  { q: "É possível acompanhar pelo celular?", a: "Sim, o aplicativo mobile desenvolvido em Flutter espelha os dashboards e indicadores em tempo real para os supervisores." },
 ];
 
 /* ============ SENSOR STATUS ============ */
@@ -358,7 +399,7 @@ SENSORS.forEach((s,i)=>{
   row.innerHTML = `
     <div>
       <p class="text-xs font-medium">${s.name}</p>
-      <p class="font-mono text-[10px] text-txmuted mt-0.5">STATUS: ONLINE</p>
+      <p class="font-mono text-[10px] text-txmuted mt-0.5">STATUS: ONLINE / IA ATIVA</p>
     </div>
     <div class="text-right flex items-center gap-2">
       <span class="w-1.5 h-1.5 rounded-full bg-${s.color} pulse-dot text-${s.color}"></span>
@@ -379,7 +420,7 @@ const investList = document.getElementById('invest-list');
 INVEST.forEach(it=>{
   const row = document.createElement('div');
   row.className = "flex items-center justify-between border-b border-line/60 pb-2.5";
-  row.innerHTML = `<span class="flex items-center gap-2 text-txsecondary"><span class="w-2 h-2 rounded-sm" style="background:${it.color}"></span>${it.label}</span><span class="text-txprimary">R$ ${it.value.toLocaleString('pt-BR')}</span>`;
+  row.innerHTML = `<span class="flex items-center gap-2 text-txsecondary"><span class="w-2 h-2 rounded-sm" style="background:${it.color}"></span>${it.label}</span><span class="text-txprimary">R$ ${it.value.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>`;
   investList.appendChild(row);
 });
 
@@ -431,12 +472,14 @@ Chart.defaults.font.size = 10;
 let sensorLabels = Array.from({length:10},(_,i)=>`-${(10-i)*5}min`);
 let tempData = Array.from({length:10},()=> (24+Math.random()*3).toFixed(1));
 let humidData = Array.from({length:10},()=> (55+Math.random()*6).toFixed(1));
+let airData = Array.from({length:10},()=> (40+Math.random()*5).toFixed(1));
 
 const sensorChart = new Chart(document.getElementById('sensorChart'), {
   type: 'line',
   data: { labels: sensorLabels, datasets: [
     { label:'Temp °C', data: tempData, borderColor:'#F5A623', backgroundColor:'rgba(245,166,35,0.08)', tension:.35, pointRadius:0, borderWidth:2, fill:true },
     { label:'Umid. %', data: humidData, borderColor:'#33C2E8', backgroundColor:'rgba(51,194,232,0.08)', tension:.35, pointRadius:0, borderWidth:2, fill:true },
+    { label:'Ar ppm', data: airData, borderColor:'#4ADE80', backgroundColor:'rgba(74,222,128,0.08)', tension:.35, pointRadius:0, borderWidth:2, fill:true },
   ]},
   options: { responsive:true, maintainAspectRatio:false,
     plugins:{ legend:{ position:'bottom', labels:{boxWidth:8,boxHeight:8,padding:12} } },
@@ -445,6 +488,7 @@ const sensorChart = new Chart(document.getElementById('sensorChart'), {
 setInterval(()=>{
   sensorChart.data.datasets[0].data.shift(); sensorChart.data.datasets[0].data.push((24+Math.random()*3).toFixed(1));
   sensorChart.data.datasets[1].data.shift(); sensorChart.data.datasets[1].data.push((55+Math.random()*6).toFixed(1));
+  sensorChart.data.datasets[2].data.shift(); sensorChart.data.datasets[2].data.push((40+Math.random()*5).toFixed(1));
   sensorChart.update('none');
 }, 2200);
 
